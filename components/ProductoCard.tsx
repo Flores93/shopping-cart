@@ -1,36 +1,49 @@
 import Image from 'next/image'
 
+import CarritoIcon from '../components/CarritoIcon'
 import { imageLoader } from '../utils/imagesUtils'
 
-const ProductoCard = () => {
+type ProductoCard = {
+  id: number
+  name: string
+  cover: string
+  price: string
+  addToCart: (id: number) => void
+}
+
+const ProductoCard = ({ name, cover, price, id, addToCart }: ProductoCard) => {
   return (
-    <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden w-6/12 md:w-4/12 m-5">
+    <div className="col max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden w-full md:w-9/12 mt-5 m-5">
       <div>
         <div>
           <Image
-            loader={imageLoader}
-            src={`https://s3-us-west-2.amazonaws.com/meru-dev/assets/product/01ezx1kw7gftqdqgva8tacvdee/open-uri20210303-25404-15zyo0r_original.?1614808740`}
+            loader={() => imageLoader(cover)}
+            src={cover}
             alt="a cat"
             layout="responsive"
-            width="5"
-            height="5"
+            width="15"
+            height="15"
             className="h-full object-cover w-full"
           />
         </div>
-        <div className="p-8">
-          <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
-            Case study
+        <div className="p-6">
+          <div className="overflow-auto h-20">
+            <p className="break-words mt-2 text-gray-500">{name}</p>
           </div>
-          <a
-            href="#"
-            className="block mt-1 text-lg leading-tight font-medium text-black hover:underline"
+          <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
+            $ {price}
+          </div>
+        </div>
+        <div className="p-6">
+          <button
+            type="button"
+            className="rounded text-white bg-blue-500 hover:bg-blue-700 p-3"
+            onClick={() => addToCart(id)}
           >
-            Finding customers for your new business
-          </a>
-          <p className="mt-2 text-gray-500">
-            Getting a new business off the ground is a lot of hard work. Here
-            are five ideas you can use to find your first customers.
-          </p>
+            <small>
+              <span>Agreagr al carrito</span> <CarritoIcon />
+            </small>
+          </button>
         </div>
       </div>
     </div>
