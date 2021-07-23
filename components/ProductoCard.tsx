@@ -3,12 +3,20 @@ import Image from 'next/image'
 import CarritoIcon from '../components/CarritoIcon'
 import { imageLoader } from '../utils/imagesUtils'
 
+export type ProductoType = {
+  name: string
+  cover: string
+  price: string
+  id: number
+  cantidad?: number
+}
+
 type ProductoCard = {
   id: number
   name: string
   cover: string
   price: string
-  addToCart: (id: number) => void
+  addToCart: ({ name, cover, price, id }: ProductoType) => void
 }
 
 const ProductoCard = ({ name, cover, price, id, addToCart }: ProductoCard) => {
@@ -38,7 +46,7 @@ const ProductoCard = ({ name, cover, price, id, addToCart }: ProductoCard) => {
           <button
             type="button"
             className="rounded text-white bg-blue-500 hover:bg-blue-700 p-3"
-            onClick={() => addToCart(id)}
+            onClick={() => addToCart({ name, cover, price, id })}
           >
             <small>
               <span>Agreagr al carrito</span> <CarritoIcon />
