@@ -1,7 +1,15 @@
 import React, { useCallback, createContext, useReducer, useEffect } from 'react'
 
 import type { ProductoType } from '../components/ProductoCard'
-import { ADD_TO_CART, GET_ALL_DATA, REMOVE_FROM_CART } from './constants'
+import { localStorageGetCarrito } from '../utils/localStorage'
+import { getProductosFromLocalStore } from './actions/shoppingCartActions'
+import {
+  ADD_TO_CART,
+  CLEAR_CARRITO,
+  GET_ALL_DATA,
+  REMOVE_PRODUCTO_FROM_CART,
+  UPDATE_CANTIDAD_PRODUCTO,
+} from './constants'
 
 type ContextData = {
   state: {
@@ -22,16 +30,18 @@ const initState = {
   carrito: [],
 }
 
-export const shoppingCartContext = createContext<ContextData>({})
+export const shoppingCartContext = createContext<ContextData>(
+  localStorageGetCarrito() || {}
+)
 
 const RootContext = ({ children }: { children: React.ReactElement }) => {
   const rootReducer = useCallback((state = {}, action) => {
     const exists = state.carrito.some(
-      (producto: ProductoType) => action.producto.id === producto.id
+      (producto: ProductoType) => action.producto?.id === producto.id
     )
 
     const addExistingProduct = state.carrito.map((producto: ProductoType) =>
-      producto.id === action.producto.id
+      producto.id === action.producto?.id
         ? {
             ...producto,
             cantidad: producto.cantidad && producto.cantidad + 1,
@@ -52,12 +62,26 @@ const RootContext = ({ children }: { children: React.ReactElement }) => {
             ? addExistingProduct
             : [...state.carrito, { ...action.producto, cantidad: 1 }],
         }
-      case REMOVE_FROM_CART:
+      case UPDATE_CANTIDAD_PRODUCTO:
+        return {
+          ...state,
+          carrito: state.carrito.map((producto: ProductoType) =>
+            producto.id === action.id
+              ? { ...producto, cantidad: action.cantidad }
+              : producto
+          ),
+        }
+      case REMOVE_PRODUCTO_FROM_CART:
         return {
           ...state,
           carrito: state.carrito.filter(
             ({ id }: { id: number }) => action.id !== id
           ),
+        }
+      case CLEAR_CARRITO:
+        return {
+          ...state,
+          carrito: [],
         }
 
       default:
@@ -65,6 +89,10 @@ const RootContext = ({ children }: { children: React.ReactElement }) => {
     }
   }, [])
   const [state, dispatch] = useReducer(rootReducer, initState)
+
+  useEffect(() => {
+    dispatch(getProductosFromLocalStore())
+  }, [])
 
   useEffect(() => {
     if (state.carrito.length > 0) {
