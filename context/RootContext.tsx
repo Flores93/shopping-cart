@@ -11,28 +11,11 @@ import {
   UPDATE_CANTIDAD_PRODUCTO,
 } from './constants'
 
-type ContextData = {
-  state: {
-    carrito: ProductoType[]
-  }
-  dispatch: ({
-    type,
-    producto,
-    data,
-  }: {
-    type: string
-    producto?: ProductoType
-    data?: ProductoType[]
-  }) => void
-}
-
 const initState = {
   carrito: [],
 }
 
-export const shoppingCartContext = createContext<ContextData>(
-  localStorageGetCarrito() || {}
-)
+export const shoppingCartContext = createContext(localStorageGetCarrito() || {})
 
 const RootContext = ({ children }: { children: React.ReactElement }) => {
   const rootReducer = useCallback((state = {}, action) => {
