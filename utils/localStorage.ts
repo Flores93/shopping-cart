@@ -1,7 +1,13 @@
 export const localStorageGetCarrito = () => {
-  const carritoLocal =
-    typeof window !== 'undefined' && JSON.parse(localStorage.getItem('carrito'))
-  return carritoLocal
+  const storedState =
+    typeof window !== 'undefined' && localStorage.getItem('carrito')
+  let parsedState = ''
+
+  if (typeof storedState === 'string') {
+    parsedState = JSON.parse(storedState)
+  }
+
+  return parsedState
 }
 
 export const localStorageRemoveCarrito = () =>
