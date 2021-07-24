@@ -1,7 +1,7 @@
 export const localStorageGetCarrito = () => {
   const storedState =
     typeof window !== 'undefined' && localStorage.getItem('carrito')
-  let parsedState = ''
+  let parsedState
 
   if (typeof storedState === 'string') {
     parsedState = JSON.parse(storedState)

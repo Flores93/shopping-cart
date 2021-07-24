@@ -1,4 +1,10 @@
-import React, { useCallback, createContext, useReducer, useEffect } from 'react'
+import {
+  useCallback,
+  createContext,
+  useReducer,
+  useEffect,
+  ReactElement,
+} from 'react'
 
 import type { ProductoType } from '../components/ProductoCard'
 import { localStorageGetCarrito } from '../utils/localStorage'
@@ -11,13 +17,30 @@ import {
   UPDATE_CANTIDAD_PRODUCTO,
 } from './constants'
 
+type ContextData = {
+  state: {
+    carrito: ProductoType[]
+  }
+  dispatch: ({
+    type,
+    producto,
+    data,
+  }: {
+    type: string
+    producto?: ProductoType
+    data?: ProductoType[]
+  }) => void
+}
+
 const initState = {
   carrito: [],
 }
 
-export const shoppingCartContext = createContext(localStorageGetCarrito() || {})
+export const shoppingCartContext = createContext<ContextData>(
+  localStorageGetCarrito() || {}
+)
 
-const RootContext = ({ children }: { children: React.ReactElement }) => {
+const RootContext = ({ children }: { children: ReactElement }) => {
   const rootReducer = useCallback((state = {}, action) => {
     const exists = state.carrito.some(
       (producto: ProductoType) => action.producto?.id === producto.id
